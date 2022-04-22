@@ -27,7 +27,7 @@ class MyThread(QThread):
         self.signal.emit(guess)
 ```
 
-After that, the result of the program's processing will be matched (similarity calculation) with the target sentence (eg 'play music', 'Take Notes', 'Open Calculator', etc.) in order to execute the corresponding command. The similarity comparison uses the similarity of the two vectors in the [TF](https://cloud.tencent.com/developer/article/1145941) matrix. As for executing commands, Python library subprocess.Popen is used to execute shell commands, so the code is OS-dependent (**MAC OS** here).
+After that, the result of the program's processing will be matched (similarity calculation) with the target sentence (eg 'play music', 'Take Notes', 'Open Calculator', etc.) in order to execute the corresponding command. The similarity comparison uses the similarity of the two vectors in the [TF](https://cloud.tencent.com/developer/article/1145941) matrix. As for executing commands, Python library subprocess.Popen is used to execute shell commands when the similarity is greater than or equal to 0.5, so the code is OS-dependent (**MAC OS** here).
 
 ```python
 #similarity
@@ -39,11 +39,14 @@ def tf_similarity(self,s1, s2):
   	return sim
   
 #MAC OS PLATFORM ONLY
-self.cmds = [
-    ['open','./hw2/resources/AGA - Better Me.mp3'],
-    ['open','./hw2/resources/takeNotes.txt'],
-    ['open','/System/Applications/Calculator.app']
-]
+#Part of the code in another function
+  self.cmds = [
+      ['open','./hw2/resources/AGA - Better Me.mp3'],
+      ['open','./hw2/resources/takeNotes.txt'],
+      ['open','/System/Applications/Calculator.app']
+  ]
+	if np.max(sims)>=0.5:
+    Popen(self.cmds[np.argmax(sims)],shell=False)
 ```
 
 One thing to mention, the API called by the speech recognition in the original example is `recognizer.recognize_sphinx(audio)`. Since the accuracy rate is too low, another API, `recognizer.recognize_google(audio)`(**maybe you need global proxy**), is called after consulting the relevant information, and the accuracy has risen sharply.

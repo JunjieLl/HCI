@@ -101,6 +101,8 @@ class MyApp(QtWidgets.QWidget):
         print(sims)
         if np.max(sims)>=0.5:
             Popen(self.cmds[np.argmax(sims)],shell=False)
+        else:
+            guess['transcription'] = "I can not understand: "+guess['transcription']
         
         self.label5.setText(f"<div style='color:green;'>{guess['transcription']}</div>")
         self.button.setEnabled(True)
