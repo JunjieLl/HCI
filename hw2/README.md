@@ -4,9 +4,9 @@
 
 ## 1850668 李俊杰
 
-### Modifications to GUI and the Codes
-
 ![image-20220423013043373](https://tva1.sinaimg.cn/large/e6c9d24ely1h1j18i896zj20gy0skjsu.jpg)
+
+### Modifications to GUI and the Codes
 
 Note that the GUI in the example uses absolute positioning for layout, which is very inflexible. Therefore, according to the original UI design, I used HBox and VBox for layout and rewrote the previous code so that the interface can adapt to the size of the window. At the same time, buttons are added for user interaction. When the user clicks the button, the earpiece icon at the top of the interface will start to play an animation to indicate that the program is listening to the user, and the label below the icon will also display blue fonts for feedback. When the user finishes speaking, the earpiece icon stops playing the animation, and the label below it will display what the program heard the user said or display the reason for the error, such as "API Unavailable".
 
