@@ -49,7 +49,7 @@ def tf_similarity(self,s1, s2):
     Popen(self.cmds[np.argmax(sims)],shell=False)
 ```
 
-One thing to mention, the API called by the speech recognition in the original example is `recognizer.recognize_sphinx(audio)`. Since the accuracy rate is too low, another API, `recognizer.recognize_google(audio)`(**maybe you need global proxy**), is called after consulting the relevant information, and the accuracy has risen sharply.
+One thing to mention, the API called by the speech recognition in the original example is `recognizer.recognize_sphinx(audio)`. Since the accuracy rate is too low, another API, `recognizer.recognize_google(audio)`(**maybe you need global proxy**), is called after consulting the relevant information, and the accuracy has risen sharply (almost close to 1).
 
 ### Accuracy of speech recognition
 
