@@ -10,9 +10,41 @@
 
 Note that the GUI in the example uses absolute positioning for layout, which is very inflexible. Therefore, according to the original UI design, I used HBox and VBox for layout and rewrote the previous code so that the interface can adapt to the size of the window. At the same time, buttons are added for user interaction. When the user clicks the button, the earpiece icon at the top of the interface will start to play an animation to indicate that the program is listening to the user, and the label below the icon will also display blue fonts for feedback. When the user finishes speaking, the earpiece icon stops playing the animation, and the label below it will display what the program heard the user said or display the reason for the error, such as "API Unavailable".
 
-It is worth mentioning that since speech recognition is a CPU-intensive task, if it is executed in the UI thread, it will affect the user's interaction. Therefore, the task is moved to the worker thread for execution, of which the execution result will be passed to the UI thread through pyqtSignal.
+It is worth mentioning that since speech recognition is a CPU-intensive task, if it is executed in the UI thread, it will affect the user's interaction. Therefore, the task is moved to the worker thread for execution, of which the execution result will be passed to the UI thread through `pyqtSignal`.
+
+```python
+class MyThread(QThread):
+    signal = pyqtSignal(dict)
+    
+    def __init__(self):
+        super().__init__()
+        # create recognizer and mic instances
+        self.recognizer = sr.Recognizer()
+        self.microphone = sr.Microphone()
+    
+    def run(self):
+        guess = recognize_speech_from_mic(self.recognizer, self.microphone)
+        self.signal.emit(guess)
+```
 
 After that, the result of the program's processing will be matched (similarity calculation) with the target sentence (eg 'play music', 'Take Notes', 'Open Calculator', etc.) in order to execute the corresponding command. The similarity comparison uses the similarity of the two vectors in the [TF](https://cloud.tencent.com/developer/article/1145941) matrix. As for executing commands, Python library subprocess.Popen is used to execute shell commands, so the code is OS-dependent (**MAC OS** here).
+
+```python
+#similarity
+def tf_similarity(self,s1, s2):
+  	cv = CountVectorizer(tokenizer=lambda s: s.split())
+  	corpus = [s1, s2]
+  	vectors = cv.fit_transform(corpus).toarray()
+  	sim = np.dot(vectors[0], vectors[1]) / (norm(vectors[0]) * norm(vectors[1]))
+  	return sim
+  
+#MAC OS PLATFORM ONLY
+self.cmds = [
+    ['open','./hw2/resources/AGA - Better Me.mp3'],
+    ['open','./hw2/resources/takeNotes.txt'],
+    ['open','/System/Applications/Calculator.app']
+]
+```
 
 One thing to mention, the API called by the speech recognition in the original example is `recognizer.recognize_sphinx(audio)`. Since the accuracy rate is too low, another API, `recognizer.recognize_google(audio)`(**maybe you need global proxy**), is called after consulting the relevant information, and the accuracy has risen sharply.
 
@@ -26,13 +58,14 @@ sims = np.array([self.tf_similarity(guess['transcription'],'play music'),
                   self.tf_similarity(guess['transcription'],'open calculator')],dtype=np.float32)
 print(sims)
 
-//sims
-//[1. 0. 0.]
-//[0. 1. 0.]
-//[0. 0. 1.]
+#sims
+#Feature 1
+#[1. 0. 0.]
+#Feature 2
+#[0. 1. 0.]
+#Feature 3
+#[0. 0. 1.]
 ```
-
-
 
 ### Feature
 
@@ -72,4 +105,8 @@ conda activate hci2
 cd hw2
 python main.py
 ```
+
+
+
+
 
