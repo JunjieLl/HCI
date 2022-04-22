@@ -105,8 +105,7 @@ Note3: You need to install conda environment.
 ```shell
 conda env create -f ./hw2/environment.yml
 conda activate hci2
-cd hw2
-python main.py
+python ./hw2/main.py
 ```
 
 
