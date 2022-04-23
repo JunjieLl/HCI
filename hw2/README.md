@@ -82,7 +82,7 @@ print(sims)
 #[0. 0. 1.]
 ```
 
-* Some Experiment
+* Some Experiments
 
 ![image-20220423121516917](https://tva1.sinaimg.cn/large/e6c9d24ely1h1jj7m443qj20j009it91.jpg)
 
