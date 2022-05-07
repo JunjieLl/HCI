@@ -1,370 +1,332 @@
-
 <!DOCTYPE html>
 <html>
-<head>
-<title>Image Search Engine</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
-<meta http-equiv='cache-control' content="no-cache, must-revalidate, post-check=0, pre-check=0">
-<meta http-equiv='expires' content='0'>
-<meta http-equiv='pragma' content='no-cache'>
 
-<meta http-equiv="cache-control" content="max-age=0" />
-<meta http-equiv="cache-control" content="no-cache" />
-<meta http-equiv="expires" content="0" />
-<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
-<meta http-equiv="pragma" content="no-cache" />
-<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-<script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>
-<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+<head>
+    <title>Image Search Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv='cache-control' content="no-cache, must-revalidate, post-check=0, pre-check=0">
+    <meta http-equiv='expires' content='0'>
+    <meta http-equiv='pragma' content='no-cache'>
+
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            padding-bottom: 10px;
+        }
+
+        .out-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* justify-content: center; */
+            width: 100%;
+            height: 100%;
+        }
+
+        .search-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 70%;
+            margin-top: 30px;
+        }
+
+        .search-item1 {
+            width: 100%;
+            display: flex;
+            border: solid;
+            border-width: 1px;
+        }
+
+        .search-item1-left {
+            display: flex;
+            width: 30%;
+            font-size: 1.5em;
+            font-weight: 500;
+            margin: 15px 25px;
+        }
+
+        .search-item1-right {
+            display: flex;
+            width: 70%;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .search-item2-hide {
+            display: none;
+        }
+
+        .search-item2-display {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            border-left: solid;
+            border-right: solid;
+            border-bottom: solid;
+            border-width: 1px;
+        }
+
+        .search-item2-title {
+            display: flex;
+            font-size: 1.2em;
+            font-weight: 500;
+            margin: 15px 25px;
+        }
+
+        .search-item2-img {
+            display: flex;
+            width: 240px;
+            height: 240px;
+            margin: 10px 25px 10px 10px;
+            margin: 15px 25px;
+        }
+
+        .button-style {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading {
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            display: none;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+        }
+
+        .result-container-hide {
+            display: none;
+        }
+
+        .result-container-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 70%;
+            margin-top: 30px;
+        }
+
+        .result-num {
+            display: flex;
+            margin-left: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .result-item1 {
+            display: flex;
+            width: 100%;
+        }
+
+        .result-set {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .result-item {
+            display: flex;
+            width: 100%;
+            border-bottom: solid;
+            border-left: solid;
+            border-right: solid;
+            border-width: 1px;
+        }
+
+        .result-image {
+            display: flex;
+            width: 240px;
+            height: auto;
+            margin: 10px 25px 10px 25px;
+        }
+
+        .result-kinds {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 25px;
+            border-left: solid;
+            border-width: 1px;
+        }
+
+        .result-head {
+            border: solid;
+            border-width: 1px;
+            display: flex;
+            width: 100%;
+        }
+
+        .category-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .category-checkbox {
+            display: flex;
+            margin: 5px 10px;
+        }
+    </style>
 
 </head>
 
-<body style="background: white;">
+<body>
 
-    <div class="navbar">
-        <div class="navbar-inner">
-            <h1 class="text-center" style="color:black;"><b>IMAGE SEARCH DEMO </b>&nbsp;&nbsp;&nbsp;<a class="navbar-brand" href="">
-                             <img src="/images/logo.svg" style="height:40px;" ></a>
-	    </h1>
-	    
+    <div class="out-container">
+        <!-- input -->
+        <div class="search-bar">
+            <div class="search-item1">
+                <div class="search-item1-left">Please Choose Image</div>
+                <div class="search-item1-right">
+                    <input id="chooseImage" type="file" style="display: none;" onchange="imageChosed(this)" />
+                    <button class="button-style" onclick="$('#chooseImage').click()">choose image</button>
+                    <button class="button-style" onclick="uploadImage()">search</button>
+                </div>
+            </div>
+            <div id="queryImageItem" class="search-item2-hide">
+                <div class="search-item2-title">Query Image</div>
+                <img id="queryImage" class="search-item2-img" />
+            </div>
+        </div>
+        <!-- loading -->
+        <img id="load" src="/images/ajax-loader.gif" class="loading">
+        <!-- result -->
+        <div id="resultContainer" class="result-container-hide">
+            <div class="result-item1">
+                <div id="numRes" class="result-num"></div>
+            </div>
+            <div id="category" class="category-container"></div>
+            <div id="resultSet" class="result-set"></div>
         </div>
     </div>
-    <div><br></br><br></br>
-    </div>
-	
-
-    <center></center>	
-
-    
-    <div id="main" class="container">
-        <table class="table" style="background: white;border: 1px solid beige;box-shadow: 3px 5px 15px 0px rgba(0, 0, 0, 0.2), 3px 5px 15px 0 rgba(0, 0, 0, 0.19);
-">
-             <tr style="background: lightgrey;"><td><b>Chose your file to upload</b></td><td><b></b></td></tr>
-            <tr><td><form method=post enctype=multipart/form-data>
-                        <!--<input data-bind="value: title" type="text" id="inputTask" placeholder="Path to the image" style="width: 150px;">-->
-			<input type="file" name="file" required />
-			<input type=submit value ="Search!" onclick="fun()"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-        </form></td><td><b></b></td></tr>
-            
-                
-                <tr id="row1" style="display:none;"><td><a href=""><button id="clear" style="display:none;">Clear</button></a></td><td></td>
-                
-            </tr>
-        </table>
-        
-        
-    </div>
-    <center>
-    <img id="load" src="/images/ajax-loader.gif" style="height:100px;width:100px;display:none;" >
-    </center>
-    <div id="main" class="container">
-       <table id="table" class="table" style="background: white; border: 1px ;display:none;" ><tbody>
-        <tr><td style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;border-right-width: 1px;background: white;
-">
-    		<img id="img0" src="" alt="Norway" style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 0px;
-    padding-left: 5px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;border-right-width: 0px;
-" width="200" height="200">
-   		
-             </td>
-             
-             <td style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;border-right-width: 1px;background: white;
-">
-    		<img id="img1" src="" alt="Norway" style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 0px;
-    padding-left: 5px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;border-right-width: 0px;
-   
-" width="200" height="200">
-   		 
-             </td>
-             <td style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;border-right-width: 1px;background: white;
-">
-    		<img id="img2" src="" alt="Norway" style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 0px;
-    padding-left: 5px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;border-right-width: 0px;
-" width="200" height="200">
-   		 
-             </td>
-         </tr>
-         <tr style="background: white;"><td style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;border-right-width: 1px;background: white;
-">
-    		<img id="img3" src="" alt="Norway" style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 0px;
-    padding-left: 5px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;border-right-width: 0px;
-" width="200" height="200">
-   		 
-             </td>
-             <td style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;border-right-width: 1px;background: white;
-">
-    		<img id="img4" src="" alt="Norway" style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 0px;
-    padding-left: 5px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;border-right-width: 0px;
-" width="200" height="200">
-   		
-             </td>
-             <td style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;border-right-width: 1px;background: white;
-">
-    		<img id="img5" src="" alt="Norway" style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 0px;
-    padding-left: 5px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;border-right-width: 0px;
-" width="200" height="200">
-   		
-             </td>
-         </tr>
-	<tr><td style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;border-right-width: 1px;background: white;
-">
-    		<img id="img6" src="" alt="Norway" style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 0px;
-    padding-left: 5px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;border-right-width: 0px;
-" width="200" height="200">
-   		
-             </td>
-             <td style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;border-right-width: 1px;background: white;
-">
-    		<img id="img7" src="" alt="Norway" style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 0px;
-    padding-left: 5px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;border-right-width: 0px;
-" width="200" height="200">
-   		 
-             </td>
-             <td style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 0px;
-    padding-left: 0px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;border-right-width: 1px;background: white;
-">
-    		<img id="img8" src="" alt="Norway" style="
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 200px;
-    height: 200px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 0px;
-    padding-left: 5px;
-    border-left-width: 0px;
-    border-bottom-width: 0px;border-right-width: 0px;
-" width="200" height="200">
-   		
-             </td>
-         </tr></tbody>
-       </table>
-
-
-
-</div>
-	
-
-
-
 
     <script type="text/javascript">
-	function myFunction(){
+        //images
+        var similarImages = []
 
-	document.getElementById("predictedResult").innerHTML= "";
-	$('#clear').hide();
-	}
-		function fun(){
+        function imageChosed(input) {
+            if (input.files.length === 0) {
+                $("#queryImageItem").addClass("search-item2-hide")
+                $("#queryImageItem").removeClass("search-item2-display")
+                return
+            }
+            let file = input.files[0]
+            let reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onload = function () {
+                $("#queryImage").attr("src", reader.result)
+                $("#queryImageItem").removeClass("search-item2-hide")
+                $("#queryImageItem").addClass("search-item2-display")
+            }
+        }
 
-		$('#load').show();
-                
-   		$("form").submit(function(evt){	 
-		//$('#loader-icon').show(); 
-               		 
-		evt.preventDefault();
-		
-                //$('#loader-icon').show();
-     		var formData = new FormData($(this)[0]);
-		 
-   		$.ajax({
-      		 url: 'imgUpload',
-       		type: 'POST',
-      		 data: formData,
-      		 //async: false,
-      		 cache: false,
-      		 contentType: false,
-      		 enctype: 'multipart/form-data',
-      		 processData: false,
-		
-      		 success: function (response) {
-		 $('#load').hide();
-		 $('#row1').show();
-		  //$('#clear').show();
-                  //console.log(response[1]);
-        	  //document.getElementById("predictedResult").innerHTML= response; 
-                  document.getElementById("img0").src = response.image0;
-		 document.getElementById("img1").src = response.image1;
-                 document.getElementById("img2").src = response.image2;
-                 document.getElementById("img3").src = response.image3;
-                  document.getElementById("img4").src = response.image4;
-                  document.getElementById("img5").src = response.image5;
-                  document.getElementById("img6").src = response.image6;
-                  document.getElementById("img7").src = response.image7;
-                  document.getElementById("img8").src = response.image8;
-                  $('#table').show();
-		   $('#clear').show();
-                  
- 
-      		 }
-   		});
-   return false;
- })};
+        function uploadImage() {
+            if ($("#chooseImage")[0].files.length === 0) {
+                window.alert("please choose image first")
+                return
+            }
+            $("#load").show()
+            let file = $("#chooseImage")[0].files[0]
+            console.log(file)
+            let formData = new FormData()
+            formData.append("file", file)
+            console.log(formData.getAll("file"))
 
-       
-    
+            $.ajax({
+                url: "/imgUpload",
+                type: "POST",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data, status) {
+                    similarImages = data
+                    $("#load").hide()
+                    $("#resultContainer").removeClass("result-container-hide")
+                    $("#resultContainer").addClass("result-container-display")
+                    $("#numRes").text(`${data.images.length} similar images found`)
+
+                    let htmlText =
+                        "<div class='result-head'><div class='result-image'>Images</div><div class='result-kinds'>Tags</div></div>"
+                    for (let i = 0; i < data.images.length; ++i) {
+                        let url = data.images[i].imageUrl
+                        let kinds = data.images[i].kinds.join(", ")
+
+                        htmlText +=
+                            `<div class="result-item"><img class='result-image' src="${url}"/><div class='result-kinds'>${kinds}</div></div>`
+                    }
+                    $("#resultSet").html(htmlText)
+
+                    let category = "<div class='category-checkbox'>Categories</div>"
+                    let kinds = data['kinds']
+                    for (let i = 0; i < kinds.length; ++i) {
+                        let kind = kinds[i]
+                        category +=
+                            `<div class='category-checkbox'><input type='checkbox' value='${kind}' onchange='category()'/>${kind}</div>`
+                    }
+                    $("#category").html(category)
+
+                    console.log(status)
+                    console.log(data)
+                }
+            })
+        }
+
+        function category() {
+            let checkKinds = []
+            $("input[type='checkbox']:checked").each(function(){
+                checkKinds.push($(this).val())
+            })
+            console.log(checkKinds)
+
+            let displayImages = []
+            for (let i = 0; i < similarImages.images.length; ++i) {
+                if (similarImages.images[i].kinds.some((kind) => {
+                        return checkKinds.some((ck) => {
+                            return ck === kind
+                        })
+                    })) {
+                    displayImages.push(similarImages.images[i])
+                }
+            }
+            if(checkKinds.length===0){
+                displayImages=similarImages.images
+            }
+            console.log(displayImages)
+
+            let htmlText =
+                "<div class='result-head'><div class='result-image'>Images</div><div class='result-kinds'>Tags</div></div>"
+            for (let i = 0; i < displayImages.length; ++i) {
+                let url = displayImages[i].imageUrl
+                let kinds = displayImages[i].kinds.join(", ")
+
+                htmlText +=
+                    `<div class="result-item"><img class='result-image' src="${url}"/><div class='result-kinds'>${kinds}</div></div>`
+            }
+            $("#resultSet").html(htmlText)
+
+            $("#numRes").text(`${displayImages.length} similar images found`)
+        }
     </script>
+
 </body>
+
 </html>

@@ -10,6 +10,8 @@ from os import path
 os.chdir(path.dirname(__file__))
 print(os.getcwd())
 
+from getImageTag import getImageKind
+
 from flask import Flask, jsonify, abort, request, make_response, url_for,redirect, render_template
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.utils import secure_filename
@@ -85,7 +87,8 @@ def upload_img():
             image_list =[os.path.join(image_path, file) for file in os.listdir(result)
                               if not file.startswith('.')]
             K = 9
-            images = dict([('image'+str(i),image_list[i]) for i in range(len(image_list))][:K])			
+            # images = dict([('image'+str(i),image_list[i]) for i in range(len(image_list))][:K])	
+            images = getImageKind(image_list)		
             return jsonify(images)
 
 #==============================================================================================================================
@@ -98,4 +101,4 @@ def main():
     
     return render_template("main.html")   
 if __name__ == '__main__':
-    app.run(debug = True, host= '0.0.0.0')
+    app.run(debug = True, host= '127.0.0.1')
