@@ -5,18 +5,28 @@ import re
 os.chdir(path.dirname(__file__))
 
 def getImageKind(images: list):
+    favoPath = r'./favo/favo.txt'
+    if not path.exists(favoPath):
+        open(favoPath,'w').close()
+    with open(favoPath) as f:
+        ls = f.readlines()
+    favos = set(list(map(lambda x: x.strip(),ls)))
+    
     pattern = re.compile(r"(?<=im)\d+(?=\.jpg)")
     res = []
     
     for image in images:
         match = pattern.search(image)
         if match:
+            imageIndex = match.group(0)
             res.append({
                 'imageUrl':image,
-                'imageIndex':match.group(),
-                'kinds':[]
+                'imageIndex':imageIndex,
+                'kinds':[],
+                "isFavo": imageIndex in favos
             })
     print(res)
+    print(type(res[0]['isFavo']))
     
     files = []
     for i in os.walk("./database/tags"):

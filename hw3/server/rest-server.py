@@ -90,7 +90,35 @@ def upload_img():
             # images = dict([('image'+str(i),image_list[i]) for i in range(len(image_list))][:K])	
             images = getImageKind(image_list)		
             return jsonify(images)
-
+        
+@app.route('/favo', methods=['POST'])
+def favo():
+    print("favo")
+    data = request.json
+    imageIndex = data.get('imageIndex')
+    isFavo = data.get('isFavo')
+    print(imageIndex,isFavo)
+    
+    favoPath = r'./favo/favo.txt'
+    if not path.exists(favoPath):
+        open(favoPath,'w').close()
+        
+    with open(favoPath) as f:
+        ls = f.readlines()
+        s = set(list(map(lambda x: x.strip(),ls)))
+    
+    if isFavo:
+        s.add(imageIndex)
+        
+    else:
+        if imageIndex in s:
+            s.remove(imageIndex)
+    
+    ls = list(map(lambda x: x+'\n',list(s)))
+    with open(favoPath,'w') as f:
+        f.writelines(ls)
+    
+    return jsonify({"msg":"ok"})
 #==============================================================================================================================
 #                                                                                                                              
 #                                           Main function                                                        	            #						     									       
