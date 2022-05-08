@@ -157,6 +157,18 @@
             width: 240px;
             height: auto;
             margin: 10px 25px 10px 25px;
+            box-shadow: 5px 5px 3px rgba(128, 128, 128, 0.57);
+        }
+
+        .result-image-table-title {
+            display: flex;
+            width: 240px;
+            height: auto;
+            margin: 10px 25px 10px 25px;
+        }
+
+        .result-image:hover {
+            cursor: pointer;
         }
 
         .result-kinds {
@@ -194,6 +206,12 @@
             margin-right: 25px;
             font-size: 36px
         }
+
+        .star-nofavo:hover {
+            cursor: pointer;
+            color: rgba(255, 0, 0, 0.339);
+        }
+
 
         .star-favo {
             color: rgba(255, 0, 0, 0.854);
@@ -240,6 +258,8 @@
             if (input.files.length === 0) {
                 $("#queryImageItem").addClass("search-item2-hide")
                 $("#queryImageItem").removeClass("search-item2-display")
+                $("#resultContainer").addClass("result-container-hide")
+                $("#resultContainer").removeClass("result-container-display")
                 return
             }
             let file = input.files[0]
@@ -280,14 +300,14 @@
                     $("#numRes").text(`${data.images.length} similar images found`)
 
                     let htmlText =
-                        "<div class='result-head'><div class='result-image'>Images</div><div class='result-kinds'>Tags</div></div>"
+                        "<div class='result-head'><div class='result-image-table-title'>Images</div><div class='result-kinds'>Tags</div></div>"
                     for (let i = 0; i < data.images.length; ++i) {
                         let url = data.images[i].imageUrl
                         let kinds = data.images[i].kinds.join(", ")
                         let index = data.images[i].imageIndex
                         let isFavo = data.images[i].isFavo
                         htmlText +=
-                            `<div class="result-item"><img class='result-image' src="${url}"/><div class='result-kinds'>${kinds}</div><i class="fa fa-star-o star-nofavo ${isFavo? 'star-favo':''}" data-index='${i}' onclick='favo(this)'></i></div>`
+                            `<div class="result-item"><img onclick='download(this)' class='result-image' src="${url}"/><div class='result-kinds'>${kinds}</div><i class="fa fa-star-o star-nofavo ${isFavo? 'star-favo':''}" data-index='${i}' onclick='favo(this)'></i></div>`
                     }
                     $("#resultSet").html(htmlText)
 
@@ -329,14 +349,14 @@
             console.log(displayImages)
 
             let htmlText =
-                "<div class='result-head'><div class='result-image'>Images</div><div class='result-kinds'>Tags</div></div>"
+                "<div class='result-head'><div class='result-image-table-title'>Images</div><div class='result-kinds'>Tags</div></div>"
             for (let i = 0; i < displayImages.length; ++i) {
                 let url = displayImages[i].imageUrl
                 let kinds = displayImages[i].kinds.join(", ")
                 let index = displayImages[i].imageIndex
                 let isFavo = displayImages[i].isFavo
                 htmlText +=
-                    `<div class="result-item"><img class='result-image' src="${url}"/><div class='result-kinds'>${kinds}</div><i class="fa fa-star-o star-nofavo ${isFavo? 'star-favo':''}" data-index='${i}' onclick='favo(this)'></i></div>`
+                    `<div class="result-item"><img onclick='download(this)' class='result-image' src="${url}"/><div class='result-kinds'>${kinds}</div><i class="fa fa-star-o star-nofavo ${isFavo? 'star-favo':''}" data-index='${i}' onclick='favo(this)'></i></div>`
             }
             $("#resultSet").html(htmlText)
 
@@ -366,6 +386,14 @@
                     }
                 }
             })
+        }
+
+        function download(image) {
+            let src = image.src
+            let a = document.createElement("a")
+            a.setAttribute("href", src)
+            a.setAttribute("download", src.split("/")[2])
+            a.click()
         }
     </script>
 
