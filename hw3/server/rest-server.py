@@ -88,7 +88,8 @@ def upload_img():
                               if not file.startswith('.')]
             K = 9
             # images = dict([('image'+str(i),image_list[i]) for i in range(len(image_list))][:K])	
-            images = getImageKind(image_list)		
+            images = getImageKind(image_list)
+            print(images)		
             return jsonify(images)
         
 @app.route('/favo', methods=['POST'])

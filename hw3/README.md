@@ -1,46 +1,98 @@
-# Image similarity search using deep learning
-This project demonstrates, how we can make use of deep learning to do state-of-the-art image similarity search. I have used tensorflow and some publicly available datasets.
+## Assignment 3
 
-## Results
-![alt text](https://cdn-images-1.medium.com/max/800/1*dd0QDhLZAjBKD5JZgJCI9w.png)
-![alt text](https://cdn-images-1.medium.com/max/800/0*ziXWbDIrdW_qJMCL.png)
-![alt text](https://cdn-images-1.medium.com/max/800/0*gL9UZQFdwFk-9smY.png)
+## 1850668 李俊杰
 
-## How to run
-1. Download [imagenet](https://drive.google.com/open?id=1UOyZ8166qM3SzxGvaUeWpBzSUfoQLUjJ) folder, extraxt and keep it in server directory
-2. Download datasets for [footwares](http://vision.cs.utexas.edu/projects/finegrained/utzap50k/), [apparels](http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion/InShopRetrieval.html) keep them inside a directory under upload folder. Final folder strcture will be as below
-```
-      root folder  
-      │
-      └───lib
-      │   
-      └───server
-      |   │───rest-server.py
-      |   │───imagenet
-      |   │───static
-      |   │───templates
-      |   │───uploads
-      |        │────dogs_and_cats
-      |              │────shoes
-      |              │────sandals
-      |              │────slippers
-      |              │────boots
-      |              │────apparels
-```
-3. Run image vectorizer which passes each data through an inception-v3 model and collects the bottleneck layer vectors and stores in disc. Edit dataset paths accordingly indide the image_vectorizer.py
-```
-  python server/image_vectorizer.py 
- ```
-   This will generate two files namely, image_list.pickle and saved_features.txt. Keep them inside lib folder where search.py script is available.
-   
-4. Start the server by running rest-server.py. This project uses flask based REST implementation for UI
-```
-  python server/rest-server.py 
-```
-5. Once the server starts up, access the url 127.0.0.1:5000 to get the UI. Now upload any file and see 9 similar images. You can change the value of K from 9 to any values, but dont foreget to update the html file accordingly for displaying.
+[TOC]
 
-One interesting application of this project is a recommendation engine based on image features.Here is an example of similar project of mine. Here instead of a web UI i have used an android UI. Once the user clicks a product image, the image will go to the server and k-number of similar product images can be displayed on UI as product recommendations. Theses rescommendations are purely based on image similarity. This kind of recommendations have high potentials in fashion-based ecommerce industry.
 
-![Example Results](server/static/images/result1.jpg)
-![Example Results](server/static/images/result2.jpg)
+
+## Environment
+
+```shell
+$ conda env create -f env.yaml
+$ conda activate hci3
+$ cd server && python rest-server.py
+```
+
+## Requirement of Image Search Task
+
+The core function of the image search task is to retrieve the 9 most similar images in the database to the one uploaded by the user. At the same time, the system should provide corresponding user interfaces to allow the user to upload images, view search results, perform further operations on the results such as classification and collection, and some other functions such as downloading images.
+
+## Design for 5 Stages
+
+#### Data Structure Definition
+
+The data returned by the server during image retrieval is defined as follows:
+
+```json
+{
+    "images": [{
+        "imageUrl": "/result/im599.jpg",
+        "imageIndex": "599",
+        "kinds": ["People_R1", "People", "Sunset", "Female", "Water"],
+        "isFavo": false
+    }, {
+        "imageUrl": "/result/im1623.jpg",
+        "imageIndex": "1623",
+        "kinds": ["Flower_R1", "Plant_Life", "Flower"],
+        "isFavo": true
+    }],
+    "kinds": ["Animals", "Bird", "Bird_R1", "Clouds", "Dog", "Dog_R1", "Female", "Flower", "Flower_R1", "Indoor", "Lake", "Male", "Male_R1", "People", "People_R1", "Plant_Life", "Portrait", "Portrait_R1", "Sea", "Sky", "Structures", "Sunset", "Water"]
+}
+```
+
+Each object in 'images' fields includes the image's URL, index in the database, categories and whether it is favorited. At the same time, the 'kinds' field contains the categories of images involved in the search result.
+
+The data submitted to the server when collecting images is defined as follows:
+
+```json
+{
+  "imageIndex": "522",
+  "isFavo": true
+}
+```
+
+It contains the index of the image in the database and whether it is favorited.
+
+#### Formulation & Initiation
+
+The user first selects the image to be uploaded, which will be displayed below the search box (only appear when the image is selected). After that, the user uploads the image to the server, which executes the image retrieval task and returns the result, and the web renders the result for the user.
+
+Before selecting an image:
+
+![image-20220508165557752](https://tva1.sinaimg.cn/large/e6c9d24egy1h213m8898jj21k50u0dgn.jpg)
+
+After selecting an image:
+
+![image-20220508165444940](https://tva1.sinaimg.cn/large/e6c9d24egy1h213kyebppj21k20u0wgf.jpg)
+
+When uploading an image:
+
+![image-20220508165650719](https://tva1.sinaimg.cn/large/e6c9d24egy1h213n4byjsj21k50u0mz6.jpg)
+
+#### Review
+
+Users can view retrieved images and their categories, and can view the number of retrieved images.
+
+![image-20220508165834232](https://tva1.sinaimg.cn/large/e6c9d24egy1h213ox8s6uj21kg0u0jv1.jpg)
+
+![image-20220508165853851](https://tva1.sinaimg.cn/large/e6c9d24egy1h213p9pucbj21ko0u0wj9.jpg)
+
+
+
+#### Refinement
+
+Above the search results, there are also classification options, and users can classify the results by clicking on the options.
+
+![image-20220508170926879](https://tva1.sinaimg.cn/large/e6c9d24egy1h214088s1wj21jm04yjsj.jpg)
+
+After selecting some classification options, the web will display the classified results (here, the number of images that satisfy the classification is 5).
+
+![image-20220508171006220](https://tva1.sinaimg.cn/large/e6c9d24egy1h2140wsh2lj21k20u078s.jpg)
+
+#### Use
+
+Users can also bookmark images and download images, by clicking the corresponding star icon and image.
+
+![image-20220508171615083](https://tva1.sinaimg.cn/large/e6c9d24egy1h214la0tcoj21jb0u0wix.jpg)
 
