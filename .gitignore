@@ -7,3 +7,6 @@ README.assets/
 *.pickle
 *.gif
 hw3/server/imagenet/*
+*.csv
+*.zip
+*.pdf
