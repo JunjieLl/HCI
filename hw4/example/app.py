@@ -22,6 +22,28 @@ age_distribution=pd.DataFrame({
 # print(age_distribution)
 age_distribution_chart=px.bar(age_distribution,x="AgeRange",y="AgeCount",color="Gender",barmode="group",title="Gender Distribution with Age")
 
+#城市职业用户
+occypations = np.sort(df["Occupation"].unique())
+city=np.sort(df["City_Category"].unique())
+oc = occypations.tolist()*len(city)
+ci = [city[i//len(occypations)] for i in range(len(oc))]
+city_population = pd.DataFrame({
+    "Occupations":oc,
+    "Cities":ci,
+    "Count":[df[(df.Occupation==oc[i])&(df.City_Category==ci[i])].shape[0] for i in range(len(oc))]
+})
+#print(city_population)
+city_occypations_population_chart = px.line(city_population,x="Occupations",y="Count",color="Cities",title="City Occypations Population")
+
+#城市职业购买力
+city_purchase = pd.DataFrame({
+    "Occupations":list(map(lambda x:str(x),oc)),
+    "Cities":ci,
+    "AveragePurchase":[df[(df.Occupation==oc[i])&(df.City_Category==ci[i])]["Purchase"].mean() for i in range(len(oc))]
+})
+city_occypations_purchase_chart=px.line_polar(city_purchase,r="AveragePurchase",theta="Occupations",color="Cities",line_close=True,title="City Occypations Purchase Power")
+
+#app
 app.layout = html.Div(children=[
     html.Div(children=["Black Friday"],style={"fontSize":"45px"}),
     html.Div(children=[
@@ -30,6 +52,10 @@ app.layout = html.Div(children=[
             dcc.Graph(id="occupation_with_age_chart"),
             dcc.Graph(id="purchase_with_age_city_chart")
             ],style={"display":"flex","flexDirection":"column"})
+        ],style={"display":"flex"}),
+    html.Div(children=[
+        dcc.Graph(id="city_occypations_population_chart",figure=city_occypations_population_chart),
+        dcc.Graph(id="city_occypations_purchase_chart",figure=city_occypations_purchase_chart)
         ],style={"display":"flex"}),
     ],style={"display":"flex","flexDirection":"column","alignItems":"center"})
 
@@ -72,4 +98,3 @@ def purchase_with_gender_marital_city(hoverDataAge):
 
 if __name__ == "__main__":
     app.run_server(debug=True)
-    pass
