@@ -46,18 +46,31 @@ city_occypations_purchase_chart=px.line_polar(city_purchase,r="AveragePurchase",
 #app
 app.layout = html.Div(children=[
     html.Div(children=["Black Friday"],style={"fontSize":"45px"}),
-    html.Div(children=[
-        dcc.Graph(id="age_distribution_chart", figure=age_distribution_chart),
-        html.Div(children=[
-            dcc.Graph(id="occupation_with_age_chart"),
-            dcc.Graph(id="purchase_with_age_city_chart")
-            ],style={"display":"flex","flexDirection":"column"})
-        ],style={"display":"flex"}),
-    html.Div(children=[
-        dcc.Graph(id="city_occypations_population_chart",figure=city_occypations_population_chart),
-        dcc.Graph(id="city_occypations_purchase_chart",figure=city_occypations_purchase_chart)
-        ],style={"display":"flex"}),
-    ],style={"display":"flex","flexDirection":"column","alignItems":"center"})
+    dcc.Tabs(id="my-tabs",children=[
+        dcc.Tab(label="Age-Based Analysis",value="ABA"),
+        dcc.Tab(label="Purchase-Power-Based Analysis",value="PPBA")]),
+    
+    html.Div(id="tab-output")
+        ],style={"display":"flex","flexDirection":"column","alignItems":"center"})
+
+@app.callback(
+    Output("tab-output","children"),
+    Input("my-tabs","value")
+)
+def clickTab(tab):
+    if tab =="PPBA":
+        return html.Div(children=[
+            dcc.Graph(id="city_occypations_population_chart",figure=city_occypations_population_chart),
+            dcc.Graph(id="city_occypations_purchase_chart",figure=city_occypations_purchase_chart)
+            ],style={"display":"flex"})
+    else:
+        return html.Div(children=[
+            dcc.Graph(id="age_distribution_chart", figure=age_distribution_chart),
+            html.Div(children=[
+                dcc.Graph(id="occupation_with_age_chart"),
+                dcc.Graph(id="purchase_with_age_city_chart")
+                ],style={"display":"flex","flexDirection":"column"})
+            ],style={"display":"flex"})
 
 @app.callback(
     Output("occupation_with_age_chart","figure"),
@@ -97,4 +110,4 @@ def purchase_with_gender_marital_city(hoverDataAge):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server()
