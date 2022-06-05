@@ -1,5 +1,4 @@
 <div style="text-align: center;font-size:25px;">济事楼4楼导览手机APP设计</div>
-<div style="text-align: center;">1850668 李俊杰</div>
 
 #### 1.手势设计介绍
 
